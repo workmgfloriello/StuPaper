@@ -1,70 +1,11 @@
-import { Note } from "@/app/interface/interface";
-import { courses } from "@/app/lib/data";
+"use client";
+import { useCourses } from "@/app/lib/context/CoursesContex";
+import { useNotes } from "@/app/lib/context/NotesContext";
 import { Circle, NotebookPen } from "lucide-react";
 
-const lastNotes: Note[] = [
-  // Analisi Matematica I
-  {
-    id: "appunti0",
-    name: "Le derivate",
-    course: "analisi-1",
-    data: new Date(2026, 5, 15),
-  },
-  {
-    id: "appunti1",
-    name: "Limiti e continuità",
-    course: "analisi-1",
-    data: new Date(2026, 5, 12),
-  },
-  {
-    id: "appunti2",
-    name: "Studio di funzione",
-    course: "analisi-1",
-    data: new Date(2026, 5, 10),
-  },
-
-  // Fisica Generale
-  {
-    id: "appunti3",
-    name: "Cinematica",
-    course: "fisica",
-    data: new Date(2026, 5, 14),
-  },
-  {
-    id: "appunti4",
-    name: "Dinamica e leggi di Newton",
-    course: "fisica",
-    data: new Date(2026, 5, 11),
-  },
-  {
-    id: "appunti5",
-    name: "Lavoro ed energia",
-    course: "fisica",
-    data: new Date(2026, 5, 8),
-  },
-
-  // Informatica
-  {
-    id: "appunti6",
-    name: "Strutture dati",
-    course: "informatica",
-    data: new Date(2026, 5, 13),
-  },
-  {
-    id: "appunti7",
-    name: "Algoritmi di ordinamento",
-    course: "informatica",
-    data: new Date(2026, 5, 9),
-  },
-  {
-    id: "appunti8",
-    name: "Programmazione ad oggetti",
-    course: "informatica",
-    data: new Date(2026, 5, 5),
-  },
-];
-
-export default function LastNotes() {
+export default function notes() {
+  const { courses } = useCourses();
+  const {notes} = useNotes();
   return (
     <div className="flex h-full min-h-0 flex-col rounded-xl border border-gray-200 bg-white">
       {/* Header */}
@@ -76,7 +17,7 @@ export default function LastNotes() {
 
       {/* Lista scrollabile */}
       <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto divide-y divide-gray-100">
-        {lastNotes.map((note) => {
+        {notes.map((note) => {
           const findColor = courses.find((course) => note.course == course.id);
           let color = "";
 

@@ -15,7 +15,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-import { courses } from "@/app/lib/data";
+import { useCourses } from "../lib/context/CoursesContex";
 
 const navItems = [
   {
@@ -41,6 +41,7 @@ export default function Sidebar() {
   const [open, setOpen] = useState(true);
   const [coursesOpen, setCoursesOpen] = useState(true);
 
+  const { courses } = useCourses();
   return (
     <aside
       className={`

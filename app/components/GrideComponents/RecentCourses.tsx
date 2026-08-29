@@ -1,7 +1,9 @@
-import { courses } from "@/app/lib/data";
+"use client";
+import { useCourses } from "@/app/lib/context/CoursesContex";
 import { BookOpen, GraduationCap, UserRound } from "lucide-react";
 
 export default function RecentCourses() {
+  const { courses } = useCourses();
   const recentCourses = courses
     .filter((course) => course.recent)
     .slice(0, 3);

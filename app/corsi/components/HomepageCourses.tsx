@@ -1,12 +1,11 @@
 "use client";
-
 import { Course } from "@/app/interface/interface";
+import { useCourses } from "@/app/lib/context/CoursesContex";
 import { useState } from "react";
 
-const initialCourses: Course[] = [];
-
 export default function HomepageCourses() {
-  const [courses, setCourses] = useState<Course[]>(initialCourses);
+  const { courses, setCourses } = useCourses();
+
   const [showForm, setShowForm] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -14,12 +13,15 @@ export default function HomepageCourses() {
     code: "",
     professor: "",
     cfu: "",
-    semester: "1° semestre",
+    semester: 0,
     description: "",
+    year: 0,
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     setFormData({
       ...formData,
@@ -36,25 +38,69 @@ export default function HomepageCourses() {
       code: formData.code,
       professor: formData.professor,
       cfu: Number(formData.cfu),
-      semester: formData.semester,
+      semester: Number(formData.semester),
       notesCount: 0,
       description: formData.description,
-      color: "bg-violet-100 text-violet-700",
-      recent: true,
+      color: "bg-red-100 text-green-500",
+      recent: false,
+      year: formData.year,
     };
 
     setCourses((prev) => [...prev, newCourse]);
-
+    console.log(courses);
     setFormData({
       name: "",
       code: "",
       professor: "",
       cfu: "",
-      semester: "1° semestre",
+      semester: 1,
+      year: 1,
       description: "",
     });
 
     setShowForm(false);
+  };
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const courseId = e.currentTarget.id;
+
+    const clickedCourse = courses.find((course) => course.id === courseId);
+    if (!clickedCourse) return;
+
+    if (clickedCourse.recent) {
+      console.log("CORSO GIA IMPOSTATO COME RECENTE");
+      return;
+    }
+
+    const recentCount = courses.filter((course) => course.recent).length;
+
+    if (recentCount < 3) {
+      setCourses((prevCourses) =>
+        prevCourses.map((course) =>
+          course.id === courseId ? { ...course, recent: true } : course,
+        ),
+      );
+    } else {
+      setCourses((prevCourses) => {
+        const recentCourses = prevCourses.filter((course) => course.recent);
+
+        const randomIndex = Math.floor(Math.random() * recentCourses.length);
+
+        const courseToRemove = recentCourses[randomIndex];
+
+        return prevCourses.map((course) => {
+          if (course.id === courseId) {
+            return { ...course, recent: true };
+          }
+
+          if (course.id === courseToRemove.id) {
+            return { ...course, recent: false };
+          }
+
+          return course;
+        });
+      });
+    }
   };
 
   return (
@@ -62,9 +108,7 @@ export default function HomepageCourses() {
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            I miei corsi
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900">I miei corsi</h1>
 
           <p className="mt-1 text-sm text-gray-500">
             Gestisci i tuoi corsi universitari
@@ -171,11 +215,30 @@ export default function HomepageCourses() {
                 onChange={handleChange}
                 className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-indigo-500"
               >
-                <option value="1° semestre">1° semestre</option>
-                <option value="2° semestre">2° semestre</option>
+                <option value="1">1° semestre</option>
+                <option value="2">2° semestre</option>
               </select>
             </div>
+            {/* Anno */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Anno
+              </label>
 
+              <select
+                name="year"
+                value={formData.year}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-indigo-500"
+              >
+                <option value="1">1° Anno</option>
+                <option value="2">2° Anno</option>
+                <option value="3">3° Anno</option>
+                <option value="4">4° Anno</option>
+                <option value="5">5° Anno</option>
+                <option value="6">6° Anno</option>
+              </select>
+            </div>
             {/* Descrizione */}
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -211,6 +274,8 @@ export default function HomepageCourses() {
           <div
             key={course.id}
             className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            id={course.id}
+            onClick={handleClick}
           >
             {/* Badge */}
             <div className="mb-5 flex items-center justify-between">
@@ -228,13 +293,9 @@ export default function HomepageCourses() {
             </div>
 
             {/* Titolo */}
-            <h2 className="text-xl font-bold text-gray-900">
-              {course.name}
-            </h2>
+            <h2 className="text-xl font-bold text-gray-900">{course.name}</h2>
 
-            <p className="mt-2 text-sm text-gray-500">
-              {course.description}
-            </p>
+            <p className="mt-2 text-sm text-gray-500">{course.description}</p>
 
             {/* Info */}
             <div className="mt-5 space-y-2 border-t border-gray-100 pt-4 text-sm text-gray-600">
@@ -247,9 +308,7 @@ export default function HomepageCourses() {
 
               <div className="flex justify-between">
                 <span>CFU</span>
-                <span className="font-medium text-gray-900">
-                  {course.cfu}
-                </span>
+                <span className="font-medium text-gray-900">{course.cfu}</span>
               </div>
 
               <div className="flex justify-between">
@@ -257,6 +316,11 @@ export default function HomepageCourses() {
                 <span className="font-medium text-gray-900">
                   {course.semester}
                 </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>Anno</span>
+                <span className="font-medium text-gray-900">{course.year}</span>
               </div>
 
               <div className="flex justify-between">
@@ -273,9 +337,7 @@ export default function HomepageCourses() {
       {/* Nessun corso */}
       {courses.length === 0 && (
         <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-12 text-center">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Nessun corso
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">Nessun corso</h2>
 
           <p className="mt-2 text-sm text-gray-500">
             Crea il tuo primo corso per iniziare.
@@ -285,4 +347,3 @@ export default function HomepageCourses() {
     </div>
   );
 }
-

@@ -4,7 +4,8 @@ export interface Course {
   code: string;
   professor: string;
   cfu: number;
-  semester: string;
+  semester: number;
+  year:number;
   notesCount: number;
   description: string;
   color: string;
