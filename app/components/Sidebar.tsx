@@ -13,7 +13,7 @@ import {
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useCourses } from "../lib/context/CoursesContex";
 
@@ -42,6 +42,14 @@ export default function Sidebar() {
   const [coursesOpen, setCoursesOpen] = useState(true);
 
   const { courses } = useCourses();
+
+  //CHIUDI SE Ti TROVI NELL'EDITOR
+  useEffect(() => {
+    if(pathname==="/editor"){
+      setOpen(false);
+    }
+  }, [pathname]);
+
   return (
     <aside
       className={`
@@ -110,8 +118,8 @@ export default function Sidebar() {
 
       {/* Nuovo appunto */}
       <div className="shrink-0 px-3">
-        <button
-          type="button"
+        <Link
+          href="/editor"
           className="
             flex
             h-10
@@ -132,7 +140,7 @@ export default function Sidebar() {
           <Plus className="h-4 w-4 shrink-0" />
 
           {open && <span className="whitespace-nowrap">Nuovo appunto</span>}
-        </button>
+        </Link>
       </div>
 
       {/* Navigation */}
@@ -296,3 +304,4 @@ export default function Sidebar() {
     </aside>
   );
 }
+
