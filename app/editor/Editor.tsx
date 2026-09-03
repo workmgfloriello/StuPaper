@@ -10,6 +10,7 @@ import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import TopBar from "./components/TopBar";
+import SaveBar from "./components/SaveBar";
 
 interface EditorProps {
   /** Contenuto iniziale (HTML) */
@@ -67,8 +68,9 @@ export default function Editor({
 
   return (
     <div className="flex w-full flex-col overflow-hidden h-screen bg-gray-200">
-      <div className="mt-2 flex justify-center items-center align-middle">
+      <div className="mt-2 flex justify-center items-center align-middle gap-5">
         <TopBar editor={editor} />
+        <SaveBar />
       </div>
       <div className="mt-5 flex-1 overflow-y-auto bg-white border border-gray-200 rounded-t-lg w-3/4 mx-auto">
         <EditorContent editor={editor} />

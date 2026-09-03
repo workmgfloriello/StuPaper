@@ -192,7 +192,7 @@ export default function TopBar({ editor }: TopBarProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-1 rounded-t-lg border border-indigo-200 bg-indigo-50 px-2 py-2">
+    <div className="flex flex-wrap items-center gap-1 rounded-lg border border-indigo-200 bg-indigo-50 px-2 py-2">
       {/* Undo / Redo */}
       <ToolbarButton
         onClick={() => editor.chain().focus().undo().run()}
