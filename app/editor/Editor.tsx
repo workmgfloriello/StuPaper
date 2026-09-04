@@ -9,8 +9,33 @@ import TextAlign from "@tiptap/extension-text-align";
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
+import HorizontalRule from "@tiptap/extension-horizontal-rule";
+import TaskList from "@tiptap/extension-task-list";
+import TaskItem from "@tiptap/extension-task-item";
+import { createLowlight } from "lowlight";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import javascript from "highlight.js/lib/languages/javascript";
+import typescript from "highlight.js/lib/languages/typescript";
+import html from "highlight.js/lib/languages/xml";
+import css from "highlight.js/lib/languages/css";
+import java from "highlight.js/lib/languages/java";
+import cpp from "highlight.js/lib/languages/cpp";
+
 import TopBar from "./components/TopBar";
 import SaveBar from "./components/SaveBar";
+import CustomShortCut from "./extension/CustomShortcut";
+
+const lowlight = createLowlight({
+  javascript,
+  typescript,
+  html,
+  css,
+  java,
+  cpp,
+});
+
+import "highlight.js/styles/atom-one-dark.css";
+import CustomBlockquote from "./extension/CustomBlockquote";
 
 interface EditorProps {
   /** Contenuto iniziale (HTML) */
@@ -36,6 +61,9 @@ export default function Editor({
         heading: { levels: [1, 2, 3] },
         link: false,
         underline: false,
+        codeBlock: false,
+        horizontalRule: false,
+        blockquote: false,
       }),
       Underline,
       TextStyle,
@@ -53,6 +81,19 @@ export default function Editor({
         },
       }),
       Placeholder.configure({ placeholder }),
+      CodeBlockLowlight.configure({
+        lowlight,
+        enableTabIndentation: true,
+        tabSize: 2,
+      }),
+      HorizontalRule,
+      TaskList,
+      TaskItem.configure({
+        nested: false,
+      }),
+      //CUSTOM EXTENDS
+      CustomBlockquote,
+      CustomShortCut,
     ],
     content,
     immediatelyRender: false,
@@ -61,7 +102,7 @@ export default function Editor({
     },
     editorProps: {
       attributes: {
-        class: "prose prose-p:my-0 prose-h1:my-0 prose-h2:my-0 prose-h3:my-0 max-w-none min-h-[300px] px-4 py-3 focus:outline-none ",
+        class: "max-w-none min-h-[300px] px-4 py-3 focus:outline-none ",
       },
     },
   });

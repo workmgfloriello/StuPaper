@@ -14,11 +14,14 @@ import {
   Quote,
   Undo2,
   Redo2,
-  Link as LinkIcon,
+  Link,
   Highlighter,
   Palette,
   Type,
   ChevronDown,
+  Code,
+  Minus,
+  ClipboardList,
 } from "lucide-react";
 
 interface TopBarProps {
@@ -32,8 +35,6 @@ const FONT_FAMILIES = [
   { label: "Monospace", value: "'Courier New', monospace" },
   { label: "Comic", value: "'Comic Sans MS', cursive" },
 ];
-
-const FONT_SIZES = ["10px", "12px", "14px", "16px", "18px", "20px", "24px", "28px", "32px", "40px"];
 
 const TEXT_COLORS = [
   "#1e1b4b", // indigo-950
@@ -85,12 +86,16 @@ function ColorPicker({ editor }: { editor: Editor }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const currentColor =
-    (editor.getAttributes("textStyle").color as string | undefined) ?? DEFAULT_TEXT_COLOR;
+    (editor.getAttributes("textStyle").color as string | undefined) ??
+    DEFAULT_TEXT_COLOR;
 
   // Chiude il popup se si clicca fuori
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -138,7 +143,9 @@ function ColorPicker({ editor }: { editor: Editor }) {
               key={color}
               type="button"
               className={`h-5 w-5 rounded-full border ${
-                currentColor === color ? "ring-2 ring-indigo-500 ring-offset-1" : "border-indigo-100"
+                currentColor === color
+                  ? "ring-2 ring-indigo-500 ring-offset-1"
+                  : "border-indigo-100"
               }`}
               style={{ backgroundColor: color }}
               onClick={() => applyColor(color)}
@@ -213,7 +220,10 @@ export default function TopBar({ editor }: TopBarProps) {
 
       {/* Font family */}
       <div className="relative inline-flex items-center">
-        <Type size={14} className="pointer-events-none absolute left-2 text-indigo-500" />
+        <Type
+          size={14}
+          className="pointer-events-none absolute left-2 text-indigo-500"
+        />
         <select
           className="h-8 cursor-pointer rounded-md border border-indigo-200 bg-white pl-7 pr-2 text-sm text-indigo-800 outline-none focus:border-indigo-500"
           onChange={(e) =>
@@ -230,7 +240,7 @@ export default function TopBar({ editor }: TopBarProps) {
           ))}
         </select>
       </div>
-    
+
       {/* Heading */}
       <select
         className="h-8 cursor-pointer rounded-md border border-indigo-200 bg-white px-2 text-sm text-indigo-800 outline-none focus:border-indigo-500"
@@ -238,10 +248,10 @@ export default function TopBar({ editor }: TopBarProps) {
           editor.isActive("heading", { level: 1 })
             ? "1"
             : editor.isActive("heading", { level: 2 })
-            ? "2"
-            : editor.isActive("heading", { level: 3 })
-            ? "3"
-            : "0"
+              ? "2"
+              : editor.isActive("heading", { level: 3 })
+                ? "3"
+                : "0"
         }
         onChange={(e) => {
           const level = Number(e.target.value);
@@ -368,9 +378,26 @@ export default function TopBar({ editor }: TopBarProps) {
 
       <Divider />
 
-      {/* Link */}
-      <ToolbarButton onClick={setLink} active={editor.isActive("link")} title="Inserisci link">
-        <LinkIcon size={16} />
+      {/* Extra */}
+      <ToolbarButton
+        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+        title="Inserisci Blocco Codice"
+      >
+        <Code size={16} />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        title="Inserisci Regola Orizzontale"
+      >
+        <Minus size={16} />
+      </ToolbarButton>
+
+      <ToolbarButton
+        onClick={() => editor.chain().focus().toggleTaskList().run()}
+        title="Inserisci To-Do List"
+      >
+        <ClipboardList size={16} />
       </ToolbarButton>
     </div>
   );
